@@ -1,4 +1,6 @@
 defmodule AnovaVisualizer do
+  alias ANOVA
+
   @moduledoc """
   Generates interactive VegaLite visualizations for ANOVA and Tukey's HSD analysis results
   using Kino.VegaLite for Livebook integration.
@@ -15,17 +17,20 @@ defmodule AnovaVisualizer do
       ...> }
       iex> AnovaVisualizer.visualize(results)
   """
-  def visualize(results) do
+  def visualize(%{
+        anova: anova_result,
+        post_hoc_test: post_hoc_result
+      }) do
     Kino.Layout.grid(
       [
         render_header(),
-        render_anova_summary(results.anova),
-        render_anova_table(results.anova),
-        render_group_means_chart(results.anova),
-        render_posthoc_summary(results.post_hoc_test),
-        render_pairwise_comparisons(results.post_hoc_test),
-        render_confidence_intervals(results.post_hoc_test),
-        render_effect_size_comparison(results.post_hoc_test)
+        render_anova_summary(anova_result),
+        render_anova_table(anova_result),
+        render_group_means_chart(anova_result),
+        render_posthoc_summary(post_hoc_result),
+        render_pairwise_comparisons(post_hoc_result),
+        render_confidence_intervals(post_hoc_result),
+        render_effect_size_comparison(post_hoc_result)
       ],
       columns: 1
     )

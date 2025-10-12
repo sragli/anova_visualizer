@@ -1,6 +1,6 @@
 # AnovaVisualizer
 
-Elixir module that generates visualization for ANOVA and Tukey's HSD analysis results created using the `anova` Elixir library.
+Elixir module to visualize ANOVA and Tukey's HSD analysis results created using the [anova](https://hex.pm/packages/anova) Elixir library.
 
 ## Installation
 
@@ -18,9 +18,8 @@ end
 
 # Add dependencies
 Mix.install([
-  {:kino, "~> 0.12"},
-  {:kino_vega_lite, "~> 0.1"},
-  {:jason, "~> 1.4"}
+  {:anova, "~> 0.6.1"},
+  {:anova_visualizer, "~> 0.1.0"}
 ])
 
 # Your results data
