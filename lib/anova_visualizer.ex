@@ -1,6 +1,4 @@
 defmodule AnovaVisualizer do
-  alias ANOVA
-
   @moduledoc """
   Generates interactive VegaLite visualizations for ANOVA and Tukey's HSD analysis results
   using Kino.VegaLite for Livebook integration.
