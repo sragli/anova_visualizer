@@ -7,7 +7,7 @@ Elixir module to visualize ANOVA and Tukey's HSD analysis results created using 
 ```elixir
 def deps do
   [
-    {:anova_visualizer, "~> 0.1.0"}
+    {:anova_visualizer, "~> 1.0.0"}
   ]
 end
 ```
@@ -19,7 +19,7 @@ end
 # Add dependencies
 Mix.install([
   {:anova, "~> 0.6.1"},
-  {:anova_visualizer, "~> 0.1.0"}
+  {:anova_visualizer, "~> 1.0.0"}
 ])
 
 # Your results data

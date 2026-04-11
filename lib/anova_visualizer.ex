@@ -9,11 +9,10 @@ defmodule AnovaVisualizer do
 
   ## Example
 
-      iex> results = %{
-      ...>   anova: %{...},
-      ...>   post_hoc_test: %{...}
-      ...> }
-      iex> AnovaVisualizer.visualize(results)
+      # Run ANOVA and post-hoc test, then visualize:
+      # anova_result = ANOVA.one_way(groups)
+      # results = TukeyHSD.test(anova_result, 0.05)
+      # AnovaVisualizer.visualize(results)
   """
   def visualize(%{
         anova: anova_result,
@@ -171,8 +170,8 @@ defmodule AnovaVisualizer do
     | **p-Value** | #{format_scientific(comp.p_value)} |
     | **Standard Error** | #{format_number(comp.standard_error)} |
     | **Effect Size (Cohen's d)** | #{format_number(comp.effect_size)} (#{effect_interp}) |
-    | **#{Float.round(comp.confidence_interval.level, 0)}% CI Lower** | #{format_number(comp.confidence_interval.lower)} |
-    | **#{Float.round(comp.confidence_interval.level, 0)}% CI Upper** | #{format_number(comp.confidence_interval.upper)} |
+    | **#{trunc(comp.confidence_interval.level)}% CI Lower** | #{format_number(comp.confidence_interval.lower)} |
+    | **#{trunc(comp.confidence_interval.level)}% CI Upper** | #{format_number(comp.confidence_interval.upper)} |
 
     ---
     """
