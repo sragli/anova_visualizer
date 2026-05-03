@@ -4,7 +4,7 @@ defmodule AnovaVisualizer.MixProject do
   def project do
     [
       app: :anova_visualizer,
-      version: "1.0.1",
+      version: "1.0.2",
       elixir: "~> 1.17",
       start_permanent: Mix.env() == :prod,
       description: description(),
@@ -24,7 +24,7 @@ defmodule AnovaVisualizer.MixProject do
 
   defp deps do
     [
-      {:anova, "~> 0.7.1"},
+      {:anova, "~> 0.7.2"},
       {:kino, "~> 0.7"},
       {:kino_vega_lite, "~> 0.1.10"},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
