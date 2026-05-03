@@ -1,3 +1,7 @@
+## [1.0.1] - 2026-05-03
+### Changed
+- Updated `anova` dependency from `~> 0.6.1` to `~> 0.7.1`
+
 ## [1.0.0] - 2026-04-11
 ### Added
 - Initial release
