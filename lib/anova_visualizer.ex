@@ -10,17 +10,18 @@ defmodule AnovaVisualizer do
   ## Example
 
       # Run ANOVA and post-hoc test, then visualize:
-      # anova_result = ANOVA.one_way(groups)
-      # results = TukeyHSD.test(anova_result, 0.05)
-      # AnovaVisualizer.visualize(results)
+      # groups
+      # |> ANOVA.one_way()
+      # |> TukeyHSD.test(0.05)
+      # |> AnovaVisualizer.visualize()
   """
   def visualize(%{
         anova: anova_result,
         post_hoc_test: post_hoc_result
-      }) do
+      }, title \\ "ANOVA One-Way with Tukey's HSD Post-Hoc Test") do
     Kino.Layout.grid(
       [
-        render_header(),
+        render_header(title),
         render_anova_summary(anova_result),
         render_anova_table(anova_result),
         render_group_means_chart(anova_result),
@@ -33,10 +34,9 @@ defmodule AnovaVisualizer do
     )
   end
 
-  defp render_header do
+  defp render_header(title) do
     content = """
-    # 📊 ANOVA Statistical Analysis
-    ## One-Way Analysis of Variance with Tukey's HSD Post-Hoc Test
+    # 📊 #{title}
 
     ---
     """

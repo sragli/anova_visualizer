@@ -1,3 +1,7 @@
+## [1.0.2] - 2026-05-03
+### Added
+- Added optional `title` parameter to `visualize/2` function for customizable header titles
+
 ## [1.0.1] - 2026-05-03
 ### Changed
 - Updated `anova` dependency from `~> 0.6.1` to `~> 0.7.1`
