@@ -24,7 +24,7 @@ defmodule AnovaVisualizer.MixProject do
 
   defp deps do
     [
-      {:anova, "~> 0.6.1"},
+      {:anova, "~> 0.7.1"},
       {:kino, "~> 0.7"},
       {:kino_vega_lite, "~> 0.1.10"},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
