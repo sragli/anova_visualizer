@@ -1,3 +1,8 @@
+## [1.1.0] - 2026-06-01
+### Changed
+- Merged pairwise group comparison charts into a single chart
+- Fixed issue with confidence intervals not displaying correctly for small sample sizes
+
 ## [1.0.2] - 2026-05-03
 ### Added
 - Added optional `title` parameter to `visualize/2` function for customizable header titles
