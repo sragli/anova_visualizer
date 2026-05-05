@@ -231,7 +231,7 @@ defmodule AnovaVisualizer do
       |> VegaLite.encode_field(:y, "difference",
         type: :quantitative,
         title: "Mean Difference",
-        scale: [zero: false]
+        scale: [zero: true]
       )
       |> VegaLite.encode_field(:color, "significant",
         type: :nominal,
