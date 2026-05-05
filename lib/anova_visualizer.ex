@@ -15,10 +15,13 @@ defmodule AnovaVisualizer do
       # |> TukeyHSD.test(0.05)
       # |> AnovaVisualizer.visualize()
   """
-  def visualize(%{
-        anova: anova_result,
-        post_hoc_test: post_hoc_result
-      }, title \\ "ANOVA One-Way with Tukey's HSD Post-Hoc Test") do
+  def visualize(
+        %{
+          anova: anova_result,
+          post_hoc_test: post_hoc_result
+        },
+        title \\ "ANOVA One-Way with Tukey's HSD Post-Hoc Test"
+      ) do
     Kino.Layout.grid(
       [
         render_header(title),
@@ -143,35 +146,55 @@ defmodule AnovaVisualizer do
   end
 
   defp render_pairwise_comparisons(post_hoc) do
-    post_hoc.pairwise_comparisons
-    |> Enum.map(&render_comparison_card/1)
-    |> Kino.Layout.grid(columns: 1)
-  end
+    comparisons = post_hoc.pairwise_comparisons
 
-  defp render_comparison_card(comp) do
-    {group1, group2} = comp.groups
-    {mean1, mean2} = comp.means
+    headers =
+      comparisons
+      |> Enum.map(fn comp ->
+        {g1, g2} = comp.groups
+        sig_emoji = if comp.significant?, do: "✅", else: "❌"
+        "#{sig_emoji} Group #{g1} vs #{g2}"
+      end)
 
-    sig_emoji = if comp.significant?, do: "✅", else: "❌"
-    sig_text = if comp.significant?, do: "**Significant**", else: "Not Significant"
-    effect_interp = interpret_cohens_d(comp.effect_size)
+    header_row = "| **Statistic** | " <> Enum.join(headers, " | ") <> " |"
+    separator = "| --- |" <> String.duplicate(" --- |", length(comparisons))
+
+    ci_level = comparisons |> List.first() |> then(& &1.confidence_interval.level) |> trunc()
+
+    rows =
+      [
+        {"**Significance**",
+         Enum.map(comparisons, fn c ->
+           if c.significant?, do: "✅ Significant", else: "❌ Not Significant"
+         end)},
+        {"**Mean Difference**", Enum.map(comparisons, &format_number(&1.difference))},
+        {"**Group Means (A / B)**",
+         Enum.map(comparisons, fn c ->
+           {m1, m2} = c.means
+           "#{format_number(m1)} / #{format_number(m2)}"
+         end)},
+        {"**Q-Statistic**", Enum.map(comparisons, &format_number(&1.q_statistic))},
+        {"**p-Value**", Enum.map(comparisons, &format_scientific(&1.p_value))},
+        {"**Standard Error**", Enum.map(comparisons, &format_number(&1.standard_error))},
+        {"**Effect Size (Cohen's d)**",
+         Enum.map(comparisons, fn c ->
+           "#{format_number(c.effect_size)} (#{interpret_cohens_d(c.effect_size)})"
+         end)},
+        {"**#{ci_level}% CI Lower**",
+         Enum.map(comparisons, &format_number(&1.confidence_interval.lower))},
+        {"**#{ci_level}% CI Upper**",
+         Enum.map(comparisons, &format_number(&1.confidence_interval.upper))}
+      ]
+      |> Enum.map(fn {label, values} ->
+        "| #{label} | " <> Enum.join(values, " | ") <> " |"
+      end)
+
+    table = Enum.join([header_row, separator | rows], "\n")
 
     """
-    ### #{sig_emoji} Group #{group1} vs Group #{group2} - #{sig_text}
+    ## 🔍 Pairwise Comparisons
 
-    #### Key Statistics
-
-    | Statistic | Value |
-    |-----------|-------|
-    | **Mean Difference** | #{format_number(comp.difference)} |
-    | **Group #{group1} Mean** | #{format_number(mean1)} |
-    | **Group #{group2} Mean** | #{format_number(mean2)} |
-    | **Q-Statistic** | #{format_number(comp.q_statistic)} |
-    | **p-Value** | #{format_scientific(comp.p_value)} |
-    | **Standard Error** | #{format_number(comp.standard_error)} |
-    | **Effect Size (Cohen's d)** | #{format_number(comp.effect_size)} (#{effect_interp}) |
-    | **#{trunc(comp.confidence_interval.level)}% CI Lower** | #{format_number(comp.confidence_interval.lower)} |
-    | **#{trunc(comp.confidence_interval.level)}% CI Upper** | #{format_number(comp.confidence_interval.upper)} |
+    #{table}
 
     ---
     """
