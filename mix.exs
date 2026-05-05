@@ -45,7 +45,7 @@ defmodule AnovaVisualizer.MixProject do
 
   defp docs() do
     [
-      main: "ANOVA_Visualizer",
+      main: "AnovaVisualizer",
       extras: ["README.md", "LICENSE", "CHANGELOG"]
     ]
   end
