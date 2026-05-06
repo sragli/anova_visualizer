@@ -40,7 +40,7 @@ defmodule AnovaVisualizer do
 
   defp render_header(title) do
     content = """
-    # 📊 #{title}
+    # #{title}
 
     ---
     """
@@ -73,7 +73,7 @@ defmodule AnovaVisualizer do
 
   defp render_anova_table(anova) do
     """
-    ## 📋 ANOVA Table
+    ## ANOVA Table
 
     | Source | Sum of Squares | df | Mean Square | F-Statistic | p-Value |
     |--------|----------------|-------|-------------|-------------|---------|
@@ -133,12 +133,12 @@ defmodule AnovaVisualizer do
       |> Enum.join(", ")
 
     """
-    ## 📈 Tukey's HSD Post-Hoc Analysis Summary
+    ## Tukey's HSD Post-Hoc Analysis Summary
 
     | Metric | Value |
     |--------|-------|
     | **Total Comparisons** | #{post_hoc.summary.total_comparisons} |
-    | **Significant Comparisons** | #{post_hoc.summary.significant_comparisons} ✅ |
+    | **Significant Comparisons** | #{post_hoc.summary.significant_comparisons} |
     | **Non-Significant Comparisons** | #{post_hoc.summary.non_significant_comparisons} |
     | **Significant Pairs** | #{significant_pairs} |
     | **Mean Difference (avg)** | #{format_number(post_hoc.summary.difference_stats.mean)} |
@@ -156,8 +156,7 @@ defmodule AnovaVisualizer do
       comparisons
       |> Enum.map(fn comp ->
         {g1, g2} = comp.groups
-        sig_emoji = if comp.significant?, do: "✅", else: "❌"
-        "#{sig_emoji} #{group_name(groups, g1)} vs #{group_name(groups, g2)}"
+        "#{group_name(groups, g1)} vs #{group_name(groups, g2)}"
       end)
 
     header_row = "| **Statistic** | " <> Enum.join(headers, " | ") <> " |"
@@ -169,7 +168,7 @@ defmodule AnovaVisualizer do
       [
         {"**Significance**",
          Enum.map(comparisons, fn c ->
-           if c.significant?, do: "✅ Significant", else: "❌ Not Significant"
+           if c.significant?, do: "✅", else: "❌"
          end)},
         {"**Mean Difference**", Enum.map(comparisons, &format_number(&1.difference))},
         {"**Group Means (A / B)**",
@@ -196,7 +195,7 @@ defmodule AnovaVisualizer do
     table = Enum.join([header_row, separator | rows], "\n")
 
     """
-    ## 🔍 Pairwise Comparisons
+    ## Pairwise Comparisons
 
     #{table}
 
