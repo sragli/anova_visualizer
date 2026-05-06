@@ -7,7 +7,7 @@ Elixir module to visualize ANOVA and Tukey's HSD analysis results created using 
 ```elixir
 def deps do
   [
-    {:anova_visualizer, "~> 1.1.0"}
+    {:anova_visualizer, "~> 1.2.0"}
   ]
 end
 ```
@@ -19,7 +19,7 @@ end
 # Add dependencies
 Mix.install([
   {:anova, "~> 0.6.1"},
-  {:anova_visualizer, "~> 1.1.0"}
+  {:anova_visualizer, "~> 1.2.0"}
 ])
 
 # Your results data
@@ -28,8 +28,14 @@ results = %{
   post_hoc_test: %{...}
 }
 
-# Create visualization
+# Create visualization with auto-generated group names ("Group 1", "Group 2", ...)
 AnovaVisualizer.visualize(results)
+
+# Optionally provide a custom title
+AnovaVisualizer.visualize(results, "My Experiment")
+
+# Optionally provide a list of group names
+AnovaVisualizer.visualize(results, "My Experiment", ["Control", "Treatment A", "Treatment B"])
 ```
 
 ## Key Features

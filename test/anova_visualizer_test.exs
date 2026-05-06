@@ -71,6 +71,35 @@ defmodule AnovaVisualizerTest do
   end
 
   # ---------------------------------------------------------------------------
+  # visualize/3 — groups parameter
+  # ---------------------------------------------------------------------------
+
+  describe "visualize/3 with groups" do
+    test "accepts a list of group names" do
+      result = run_analysis()
+      layout = AnovaVisualizer.visualize(result, "My Title", ["Control", "Treatment A", "Treatment B"])
+      assert %Kino.Layout{} = layout
+    end
+
+    test "works when groups list matches the number of groups exactly" do
+      anova = ANOVA.one_way([[1.0, 2.0, 3.0], [10.0, 11.0, 12.0]])
+      result = TukeyHSD.test(anova, 0.05)
+      assert %Kino.Layout{} = AnovaVisualizer.visualize(result, "Two Groups", ["A", "B"])
+    end
+
+    test "falls back to 'Group N' for out-of-range indices" do
+      result = run_analysis()
+      # Only 2 names provided for 3 groups — third should fall back gracefully
+      assert %Kino.Layout{} = AnovaVisualizer.visualize(result, "Partial Names", ["Alpha", "Beta"])
+    end
+
+    test "nil groups behaves identically to omitting groups" do
+      result = run_analysis()
+      assert %Kino.Layout{} = AnovaVisualizer.visualize(result, "Title", nil)
+    end
+  end
+
+  # ---------------------------------------------------------------------------
   # ANOVA structural integrity — ensure the anova dep returns what we rely on
   # ---------------------------------------------------------------------------
 

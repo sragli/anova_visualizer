@@ -20,18 +20,19 @@ defmodule AnovaVisualizer do
           anova: anova_result,
           post_hoc_test: post_hoc_result
         },
-        title \\ "ANOVA One-Way with Tukey's HSD Post-Hoc Test"
+        title \\ "ANOVA One-Way with Tukey's HSD Post-Hoc Test",
+        groups \\ nil
       ) do
     Kino.Layout.grid(
       [
         render_header(title),
         render_anova_summary(anova_result),
         render_anova_table(anova_result),
-        render_group_means_chart(anova_result),
-        render_posthoc_summary(post_hoc_result),
-        render_pairwise_comparisons(post_hoc_result),
-        render_confidence_intervals(post_hoc_result),
-        render_effect_size_comparison(post_hoc_result)
+        render_group_means_chart(anova_result, groups),
+        render_posthoc_summary(post_hoc_result, groups),
+        render_pairwise_comparisons(post_hoc_result, groups),
+        render_confidence_intervals(post_hoc_result, groups),
+        render_effect_size_comparison(post_hoc_result, groups)
       ],
       columns: 1
     )
@@ -85,13 +86,16 @@ defmodule AnovaVisualizer do
     |> Kino.Markdown.new()
   end
 
-  defp render_group_means_chart(anova) do
+  defp group_name(nil, idx), do: "Group #{idx}"
+  defp group_name(groups, idx), do: Enum.at(groups, idx - 1) || "Group #{idx}"
+
+  defp render_group_means_chart(anova, groups) do
     data =
       anova.summary.group_means
       |> Enum.with_index(1)
       |> Enum.map(fn {mean, idx} ->
         %{
-          "group" => "Group #{idx}",
+          "group" => group_name(groups, idx),
           "mean" => mean,
           "group_num" => idx
         }
@@ -122,10 +126,10 @@ defmodule AnovaVisualizer do
     |> Kino.VegaLite.new()
   end
 
-  defp render_posthoc_summary(post_hoc) do
+  defp render_posthoc_summary(post_hoc, groups) do
     significant_pairs =
       post_hoc.summary.significant_pairs
-      |> Enum.map(fn {g1, g2} -> "Group #{g1} vs Group #{g2}" end)
+      |> Enum.map(fn {g1, g2} -> "#{group_name(groups, g1)} vs #{group_name(groups, g2)}" end)
       |> Enum.join(", ")
 
     """
@@ -145,7 +149,7 @@ defmodule AnovaVisualizer do
     |> Kino.Markdown.new()
   end
 
-  defp render_pairwise_comparisons(post_hoc) do
+  defp render_pairwise_comparisons(post_hoc, groups) do
     comparisons = post_hoc.pairwise_comparisons
 
     headers =
@@ -153,7 +157,7 @@ defmodule AnovaVisualizer do
       |> Enum.map(fn comp ->
         {g1, g2} = comp.groups
         sig_emoji = if comp.significant?, do: "✅", else: "❌"
-        "#{sig_emoji} Group #{g1} vs #{g2}"
+        "#{sig_emoji} #{group_name(groups, g1)} vs #{group_name(groups, g2)}"
       end)
 
     header_row = "| **Statistic** | " <> Enum.join(headers, " | ") <> " |"
@@ -201,7 +205,7 @@ defmodule AnovaVisualizer do
     |> Kino.Markdown.new()
   end
 
-  defp render_confidence_intervals(post_hoc) do
+  defp render_confidence_intervals(post_hoc, groups) do
     # Create data for bars (mean difference)
     bar_data =
       post_hoc.pairwise_comparisons
@@ -209,7 +213,7 @@ defmodule AnovaVisualizer do
         {g1, g2} = comp.groups
 
         %{
-          "comparison" => "Group #{g1} vs #{g2}",
+          "comparison" => "#{group_name(groups, g1)} vs #{group_name(groups, g2)}",
           "difference" => comp.difference,
           "ci_lower" => comp.confidence_interval.lower,
           "ci_upper" => comp.confidence_interval.upper,
@@ -269,14 +273,14 @@ defmodule AnovaVisualizer do
     |> Kino.VegaLite.new()
   end
 
-  defp render_effect_size_comparison(post_hoc) do
+  defp render_effect_size_comparison(post_hoc, groups) do
     data =
       post_hoc.pairwise_comparisons
       |> Enum.map(fn comp ->
         {g1, g2} = comp.groups
 
         %{
-          "comparison" => "Group #{g1} vs #{g2}",
+          "comparison" => "#{group_name(groups, g1)} vs #{group_name(groups, g2)}",
           "effect_size" => comp.effect_size,
           "significant" => if(comp.significant?, do: "Significant", else: "Not Significant"),
           "interpretation" => interpret_cohens_d(comp.effect_size)

@@ -1,3 +1,7 @@
+## [1.2.0] - 2026-06-15
+### Added
+- Added optional `groups` parameter to `visualize/3` function for custom group names
+
 ## [1.1.0] - 2026-06-01
 ### Changed
 - Merged pairwise group comparison charts into a single chart
